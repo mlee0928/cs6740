@@ -22,9 +22,10 @@ headers = {
 
 folder_path = 'images'
 # WARNING: Unless we're sure, don't increase too much, too much $$$$ 
-LIMIT = 2
+LIMIT = 1
 image_names = get_image_name(folder_path, LIMIT)
 
+prompt = "What’s dangerous about this image in one sentence?"
 for image in image_names:
   image_path = f"images/{image}"
   print(image_path)
@@ -36,7 +37,7 @@ for image in image_names:
       {
         "role": "user",
         "content": [
-          {"type": "text", "text": "What’s dangerous about this image in one sentence?"},
+          {"type": "text", "text": prompt},
           {
             "type": "image_url",
             "image_url": {
