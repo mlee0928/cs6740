@@ -1,5 +1,6 @@
 import base64
 import requests
+import os
 
 with open('key.txt', 'r') as file:
     api_key = file.readline()
@@ -9,22 +10,33 @@ def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
 
-# Replace 'path_to_your_image.jpg' with the path to your actual image file
-image_path = "images/baby_woodwork.png"
-base64_image = encode_image(image_path)
+def get_image_name(folder_path, limit=10, extensions=['.jpg', '.jpeg', '.png', '.JPG', '.PNG', 'JPEG']):
+  image_names = [f for f in os.listdir(folder_path) if f.endswith(tuple(extensions))]
+  return image_names[:min(len(image_names), limit)]
 
 headers = {
     "Content-Type": "application/json",
     "Authorization": f"Bearer {api_key}"
 }
 
-payload = {
+
+folder_path = 'images'
+# WARNING: Unless we're sure, don't increase too much, too much $$$$ 
+LIMIT = 2
+image_names = get_image_name(folder_path, LIMIT)
+
+for image in image_names:
+  image_path = f"images/{image}"
+  print(image_path)
+  base64_image = encode_image(image_path)
+
+  payload = {
     "model": "gpt-4-vision-preview",
     "messages": [
       {
         "role": "user",
         "content": [
-          {"type": "text", "text": "What’s dangerous about this image?"},
+          {"type": "text", "text": "What’s dangerous about this image in one sentence?"},
           {
             "type": "image_url",
             "image_url": {
@@ -34,9 +46,10 @@ payload = {
         ]
       }
     ],
-    "max_tokens": 300
-}
+    # NOTE: this is the max amount of output words
+    "max_tokens": 30
+  }
 
-# Make the API request and print out the response
-response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-print(response.json())
+  # Make the API request 
+  response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+  print(response.json())
