@@ -2,7 +2,7 @@ import base64
 import requests
 import os
 
-with open('key.txt', 'r') as file:
+with open('key1.txt', 'r') as file:
     api_key = file.readline()
 
 # Function to encode the image to base64
@@ -10,7 +10,7 @@ def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
 
-def get_image_name(folder_path, limit=10, extensions=['.jpg', '.jpeg', '.png', '.JPG', '.PNG', 'JPEG']):
+def get_image_name(folder_path, limit=10, extensions=['.jpg', '.jpeg', '.png', '.JPG', '.PNG', '.JPEG', '.webp']):
   image_names = [f for f in os.listdir(folder_path) if f.endswith(tuple(extensions))]
   return image_names[:min(len(image_names), limit)]
 
